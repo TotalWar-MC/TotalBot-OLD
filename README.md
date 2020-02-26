@@ -1,2 +1,2 @@
 # TotalBot
-Bot designed specifically for TotalWar
+Bot designed specifically for TW
