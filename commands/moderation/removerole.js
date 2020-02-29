@@ -8,22 +8,26 @@ module.exports = {
     usage: "<id | mention>",
     run: async (client, message, args) => {
       
-        let rMember = message.mentions.members.first() || message.guild.members.get(args[0]);
-        let role = args.join(" ").slice(22);
-        let gRole = message.guild.roles.find(`name`, role);
-      
-        if(!message.member.hasPermission("MANAGE_MEMBERS")) 
-            return message.reply("Insufficient permissions.").then(m => m.delete(5000));
+         //.addrole @user (role)
+         if (message.deletable) message.delete();
         
-        // No person found
-        if (!rMember)
-            return message.reply("Couldn't find that person?").then(m => m.delete(5000));
-        
-        if(!role) 
-            return message.reply("Specify a role!").then(m => m.delete(5000));
-
-        if(!gRole) 
-            return message.reply("Couldn't find that role.").then(m => m.delete(5000));
+         // Either a mention or ID
+         let rMember = message.mentions.members.first() || message.guild.members.get(args[0]);
+         
+         // No person found
+         if (!rMember)
+             return message.reply("Couldn't find that person?").then(m => m.delete(5000));
+ 
+         // The member has BAN_MEMBERS or is a bot
+         if (rMember.hasPermission("BAN_MEMBERS") || rMember.user.bot)
+             return message.channel.send("Can't add roles to that member").then(m => m.delete(5000));
+ 
+         // If there's no argument
+         if (!args[1])
+             return message.channel.send("Please specify a role").then(m => m.delete(5000));
+         
+         let gRole = message.guild.roles.find(`name`, role);
+         if(!gRole) return message.reply("Couldn't find that role.");
 
         const channel = message.guild.channels.find(c => c.name === "moderation")
 
@@ -49,6 +53,7 @@ module.exports = {
           .setAuthor("Role removed", rMember.user.displayAvatarURL)
           .setDescription(stripIndents
           `**> Member:** ${rMember} (${rMember.user.id})
+          **> Removed by:** ${message.member}
           **> Role removed:** ${gRole.name}`);
  
          return channel.send(embed);

@@ -1,3 +1,5 @@
+const { RichEmbed } = require("discord.js");
+
 module.exports = {
     name: "addrole",
     category: "moderation",
@@ -6,16 +8,28 @@ module.exports = {
     usage: "<id | mention>",
     run: async (client, message, args) => {
 
-         //.addrole @user (role)
-        if(!message.member.hasPermission("MANAGE_MEMBERS")) return message.reply("Sorry pal, you can't do that.");
-        let rMember = message.guild.member(message.mentions.users.first()) || message.guild.members.get(args[0]);
-        if(!rMember) return message.reply("Couldn't find that user, yo.");
-        let role = args.join(" ").slice(22);
-        if(!role) return message.reply("Specify a role!");
+        //.addrole @user (role)
+        if (message.deletable) message.delete();
+        
+        // Either a mention or ID
+        let rMember = message.mentions.members.first() || message.guild.members.get(args[0]);
+        
+        // No person found
+        if (!rMember)
+            return message.reply("Couldn't find that person?").then(m => m.delete(5000));
+
+        // The member has BAN_MEMBERS or is a bot
+        if (rMember.hasPermission("BAN_MEMBERS") || rMember.user.bot)
+            return message.channel.send("Can't add roles to that member").then(m => m.delete(5000));
+
+        // If there's no argument
+        if (!args[1])
+            return message.channel.send("Please specify a role").then(m => m.delete(5000));
+    
+        const channel = message.guild.channels.find(c => c.name === "moderation")
+        
         let gRole = message.guild.roles.find(`name`, role);
         if(!gRole) return message.reply("Couldn't find that role.");
-
-        const channel = message.guild.channels.find(c => c.name === "moderation")
 
         if(rMember.roles.has(gRole.id)) return message.reply("They already have that role, try .removerole");
             await(rMember.addRole(gRole.id));
@@ -29,7 +43,8 @@ module.exports = {
          
         catch{
             message.channel.send(`<@${rMember.id}> has been given the role ${gRole.name}. We tried to DM them, but their DMs are locked.`)
-    // No channel found
+        
+        // No channel found
         if (!channel)
              return message.channel.send("Couldn't find a `#moderation` channel").then(m => m.delete(5000));
         
@@ -40,6 +55,7 @@ module.exports = {
           .setAuthor("Role added", rMember.user.displayAvatarURL)
           .setDescription(stripIndents
           `**> Member:** ${rMember} (${rMember.user.id})
+          **> Added by:** ${message.member}
           **> Role added:** ${gRole.name}`);
  
          return channel.send(embed);
