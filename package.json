@@ -1,0 +1,27 @@
+{
+  "name": "totalbot",
+  "version": "1.0.0",
+  "description": "A bot designed for TW",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Steffbeard/TotalBot.git"
+  },
+  "author": "Steffbeard, zune",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Steffbeard/TotalBot/issues"
+  },
+  "homepage": "https://github.com/Steffbeard/TotalBot#readme",
+  "dependencies": {
+    "ascii-table": "0.0.9",
+    "common-tags": "^1.8.0",
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
+    "fs": "0.0.1-security",
+    "ms": "^2.1.2"
+  }
+}
