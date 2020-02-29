@@ -6,7 +6,7 @@ module.exports = {
     usage: "<id | mention>",
     run: async (client, message, args) => {
 
-         //.addrole @andrew Dog Person
+         //.addrole @user (role)
         if(!message.member.hasPermission("MANAGE_MEMBERS")) return message.reply("Sorry pal, you can't do that.");
         let rMember = message.guild.member(message.mentions.users.first()) || message.guild.members.get(args[0]);
         if(!rMember) return message.reply("Couldn't find that user, yo.");
